@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32319.34
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Excalibur.Ini", "Excalibur.Ini\Excalibur.Ini.csproj", "{7F8E8133-2B6B-485D-999A-7FC015B142CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Excalibur.Ini.Tests", "Excalibur.Ini.Tests\Excalibur.Ini.Tests.csproj", "{F1E774E4-E0F4-4238-9AC8-40D0C75D2E07}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7F8E8133-2B6B-485D-999A-7FC015B142CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F8E8133-2B6B-485D-999A-7FC015B142CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F8E8133-2B6B-485D-999A-7FC015B142CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F8E8133-2B6B-485D-999A-7FC015B142CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1E774E4-E0F4-4238-9AC8-40D0C75D2E07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1E774E4-E0F4-4238-9AC8-40D0C75D2E07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1E774E4-E0F4-4238-9AC8-40D0C75D2E07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1E774E4-E0F4-4238-9AC8-40D0C75D2E07}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9CB0DB12-8545-44B2-BF76-5C89DABF74E5}
+	EndGlobalSection
+EndGlobal
