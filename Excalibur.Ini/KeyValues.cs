@@ -17,7 +17,7 @@ namespace Excalibur.Ini
         {
             _comparer = comparer;
             _items = new List<T>();
-            _dicItems = new Dictionary<string, List<T>>();
+            _dicItems = new Dictionary<string, List<T>>(comparer);
         }
 
         public KeyValues(KeyValues<T> other, IEqualityComparer<string> comparer) : this(comparer)
