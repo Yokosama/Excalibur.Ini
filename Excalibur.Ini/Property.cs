@@ -31,6 +31,8 @@ namespace Excalibur.Ini
             }
         }
 
+        public string CommentAfterValue { get; set; }
+
         public Property(string key, string value = "")
         {
             if (string.IsNullOrEmpty(key))
@@ -45,6 +47,7 @@ namespace Excalibur.Ini
             Key = other.Key;
             Value = other.Value;
             Comments = other.Comments;
+            CommentAfterValue = other.CommentAfterValue;
         }
 
         public Property Clone()

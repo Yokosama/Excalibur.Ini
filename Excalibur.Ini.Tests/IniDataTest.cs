@@ -22,6 +22,12 @@ namespace Excalibur.Ini.Tests
             Assert.AreEqual(data.GetPropertyRawValue("section_test", "1", ""), "11");
             Assert.AreEqual(data.GetPropertyRawValue("section_test", "1", "", true), "111");
 
+            var getSec = data.GetSection("section_test2");
+            Assert.AreEqual(getSec.Name, "section_test2");
+
+            var getSecions = data.GetSection("section_test");
+            Assert.AreEqual(getSecions.Count, 2);
+
             Assert.AreEqual(data.GetPropertyValue("section_test", "2", 0), 22);
             Assert.AreEqual(data.GetPropertyValue("section_test", "1", 0, true), 111);
 
@@ -35,6 +41,10 @@ namespace Excalibur.Ini.Tests
             clone.SetPropertyValue("section_test", "1", "233", lastSection: true);
             Assert.AreEqual(data.GetPropertyValue("section_test", "1", 0, true), 111111);
             Assert.AreEqual(clone.GetPropertyValue("section_test", "1", 0, true), 233);
+
+            clone.Clear();
+            Assert.AreEqual(clone.Global.Count, 0);
+            Assert.AreEqual(clone.SectionCount, 0);
         }
     }
 }

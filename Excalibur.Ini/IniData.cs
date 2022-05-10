@@ -36,7 +36,32 @@ namespace Excalibur.Ini
                 _scheme = value.Clone();
             }
         }
- 
+
+        private List<string> _endOfFileComments;
+        /// <summary>
+        /// 文件末尾的注释，不属于任何节点或属性
+        /// </summary>
+        public List<string> EndOfFileComments
+        {
+            get
+            {
+                if (_endOfFileComments == null)
+                {
+                    _endOfFileComments = new List<string>();
+                }
+                return _endOfFileComments;
+            }
+            set
+            {
+                if (_endOfFileComments == null)
+                {
+                    _endOfFileComments = new List<string>();
+                }
+                _endOfFileComments.Clear();
+                _endOfFileComments.AddRange(value);
+            }
+        }
+
         public int SectionCount => Sections.Length;
 
         public IniData()
@@ -73,6 +98,31 @@ namespace Excalibur.Ini
              
             Sections.Add(section.Name, section, canRepeat);
             return section;
+        }
+
+        public Section GetSection(string sectionName, bool lastSection = false)
+        {
+            if (string.IsNullOrEmpty(sectionName))
+            {
+                return null;
+            }
+
+            return lastSection ? Sections.FindLast(sectionName) : Sections.Find(sectionName);
+        }
+
+        public List<Section> GetSections(string sectionName)
+        {
+            if (string.IsNullOrEmpty(sectionName))
+            {
+                return null;
+            }
+
+            return Sections.FindAll(sectionName);
+        }
+
+        public bool ContainsSection(string sectionName)
+        {
+            return Sections.ContainsKey(sectionName);
         }
 
         public string GetPropertyRawValue(string sectionName, string key, string nullValue, bool lastSection = false, bool lastProperty = false)
@@ -126,6 +176,12 @@ namespace Excalibur.Ini
         public IniData Clone()
         {
             return new IniData(this);
+        }
+
+        public void Clear()
+        {
+            Global.Clear();
+            Sections.Clear();
         }
     }
 }

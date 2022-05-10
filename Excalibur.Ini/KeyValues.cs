@@ -78,13 +78,12 @@ namespace Excalibur.Ini
 
         public T FindLast(string key)
         {
-            var count = _dicItems[key].Count;
-            if (!_dicItems.ContainsKey(key) || count == 0)
+            if (!_dicItems.ContainsKey(key) || _dicItems[key].Count == 0)
             {
                 return null;
             }
 
-            return _dicItems[key][count - 1];
+            return _dicItems[key][_dicItems[key].Count - 1];
         }
 
         public List<T> FindAll(string key)
