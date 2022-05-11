@@ -59,6 +59,7 @@ namespace Excalibur.Ini
         private void Parse(TextReader reader, IniData iniData)
         {
             iniData.Clear();
+            iniData.ParserConfiguration = Configuration;
             _errorExceptions.Clear();
             if (Configuration.ParseComments)
             {

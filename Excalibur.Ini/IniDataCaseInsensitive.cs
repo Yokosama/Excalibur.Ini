@@ -25,7 +25,8 @@ namespace Excalibur.Ini
         {
             Global = new Section(other.Global, StringComparer.OrdinalIgnoreCase);
             Sections = new KeyValues<Section>(other.Sections, StringComparer.OrdinalIgnoreCase);
-            _scheme = other.Scheme.Clone();
+            Scheme = other.Scheme;
+            ParserConfiguration = other.ParserConfiguration;
         }
     }
 }

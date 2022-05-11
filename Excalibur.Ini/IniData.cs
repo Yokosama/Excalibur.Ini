@@ -35,6 +35,29 @@ namespace Excalibur.Ini
             }
         }
 
+        protected IniParserConfiguration _parserConfiguration;
+        /// <summary>
+        /// ini内容的解析配置
+        /// </summary>
+        public IniParserConfiguration ParserConfiguration
+        {
+            get
+            {
+                if (_parserConfiguration == null)
+                {
+                    _parserConfiguration = new IniParserConfiguration();
+                }
+
+                return _parserConfiguration;
+            }
+
+            set
+            {
+                if (value == null) return;
+                _parserConfiguration = value.Clone();
+            }
+        }
+
         private List<string> _endOfFileComments;
         /// <summary>
         /// 文件末尾的注释，不属于任何节点或属性
@@ -79,6 +102,8 @@ namespace Excalibur.Ini
         {
             Global = other.Global.Clone();
             Sections = other.Sections.Clone();
+            Scheme = other.Scheme;
+            ParserConfiguration = other.ParserConfiguration;
         }
 
         public Section Add(string sectionName, bool canRepeat = true)
