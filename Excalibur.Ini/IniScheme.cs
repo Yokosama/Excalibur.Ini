@@ -10,7 +10,7 @@ namespace Excalibur.Ini
     {
         private readonly List<string> _commentStrings = new List<string> { ";" };
         /// <summary>
-        /// ini content comment start strings
+        /// ini content comment start strings. default value { ";" }
         /// </summary>
         public List<string> CommentStrings
         {

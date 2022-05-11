@@ -225,7 +225,7 @@ namespace Excalibur.Ini
 
             if (propertyAssignmentIndex < 0) return false;
 
-            var keyLength = propertyAssignmentIndex - 1;
+            var keyLength = propertyAssignmentIndex;
             var key = currentLine.Substring(0, keyLength);
             if (string.IsNullOrWhiteSpace(key))
             {
@@ -235,7 +235,7 @@ namespace Excalibur.Ini
                 throw new IniParsingException(error, _currentLineNumber, currentLine);
             }
 
-            var valueStartIndex = propertyAssignmentIndex + Scheme.PropertyAssignmentString.Length + 1;
+            var valueStartIndex = propertyAssignmentIndex + Scheme.PropertyAssignmentString.Length;
             var value = currentLine.Substring(valueStartIndex);
 
             var commentAfterValue = "";
@@ -243,6 +243,8 @@ namespace Excalibur.Ini
             {
                 if (HasComment(value, Scheme.CommentStrings, out int commentStart, out string currentCommentString))
                 {
+                    var comment = value.Substring(commentStart);
+
                     if (commentStart > 0)
                     {
                         value = value.Substring(0, commentStart);
@@ -252,11 +254,13 @@ namespace Excalibur.Ini
                         value = "";
                     }
 
-                    var comment = value.Substring(commentStart);
                     if (Configuration.RemoveCommentString)
                     {
-                        var startIndex = commentStart + currentCommentString.Length;
-                        comment = comment.Substring(startIndex);
+                        var startIndex = currentCommentString.Length;
+                        if(startIndex < comment.Length)
+                        {
+                            comment = comment.Substring(startIndex);
+                        }
                         if (Configuration.TrimComments)
                         {
                             comment = comment.Trim();
@@ -272,8 +276,8 @@ namespace Excalibur.Ini
                 }
             }
 
-            if (Configuration.TrimPropertiesKey) key.Trim();
-            if (Configuration.TrimPropertiesValue) value.Trim();
+            if (Configuration.TrimPropertiesKey) key = key.Trim();
+            if (Configuration.TrimPropertiesValue) value = value.Trim();
 
             if (string.IsNullOrEmpty(_currentSectionName))
             {

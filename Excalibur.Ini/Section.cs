@@ -84,6 +84,16 @@ namespace Excalibur.Ini
             return Properties.Add(property.Key, property, canRepeat);
         }
 
+        public Property GetProperty(string key, bool last = false)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                return null;
+            }
+
+            return last ? Properties.FindLast(key) : Properties.Find(key);
+        }
+
         public string GetPropertyRawValue(string key, string nullValue, bool last = false)
         {
             var find = last ? Properties.FindLast(key) : Properties.Find(key);
