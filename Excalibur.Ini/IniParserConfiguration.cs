@@ -51,14 +51,14 @@
         public bool TrimPropertiesValue { get; set; } = false;
 
         /// <summary>
-        /// true：移除注释的前后空白字符；false：注释包括前后空白字符，默认值：false
-        /// </summary>
-        public bool TrimComments { get; set; } = false;
-
-        /// <summary>
         /// true：解析时保留注释；false：解析时不保留注释，默认值：true
         /// </summary>
         public bool ParseComments { get; set; } = true;
+
+        /// <summary>
+        /// true：移除注释的前后空白字符；false：注释包括前后空白字符，默认值：false
+        /// </summary>
+        public bool TrimComments { get; set; } = false;
 
         /// <summary>
         /// true：移除注释的起始字符串；false：保留起始字符串，默认值：true
@@ -74,6 +74,16 @@
         /// true：解析属性行后的注释；false：不解析属性行的注释，默认值：true
         /// </summary>
         public bool ParseCommentAfterProperty { get; set; } = true;
+
+        /// <summary>
+        /// true：解析节点定义名称后的注释；false：不解析节点定义后的注释，默认值：true
+        /// </summary>
+        public bool ParseCommentAfterSection { get; set; } = true;
+
+        /// <summary>
+        /// true：当SkipInvalidLines=true时，解析时将无效行作为注释；false：不解析无效行为注释，默认值：false
+        /// </summary>
+        public bool InvalidLineAsComment { get; set; } = false;
 
         public IniParserConfiguration()
         {
@@ -95,6 +105,8 @@
             RemoveCommentString = other.RemoveCommentString;
             ParseBlankLineAsComment = other.ParseBlankLineAsComment;
             ParseCommentAfterProperty = other.ParseCommentAfterProperty;
+            ParseCommentAfterSection = other.ParseCommentAfterSection;
+            InvalidLineAsComment = other.InvalidLineAsComment;
         }
 
         public IniParserConfiguration Clone()

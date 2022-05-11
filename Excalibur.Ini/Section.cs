@@ -45,6 +45,8 @@ namespace Excalibur.Ini
             }
         }
 
+        public string CommentAfterSectionName { get; set; }
+
         public KeyValues<Property> Properties { get; set; }
 
         public int Count { get { return Properties.Length; } }

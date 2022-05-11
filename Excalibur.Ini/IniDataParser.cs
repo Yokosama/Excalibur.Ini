@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Text;
 
 namespace Excalibur.Ini
 {
@@ -98,6 +97,8 @@ namespace Excalibur.Ini
             {
                 iniData.Clear();
             }
+            _currentSectionName = null;
+            _currentLineNumber = 0;
         }
 
         protected virtual void ParseLine(string currentLine, IniData iniData)
@@ -119,7 +120,14 @@ namespace Excalibur.Ini
 
             if (ParseProperty(currentLine, iniData)) return;
 
-            if (Configuration.SkipInvalidLines) return;
+            if (Configuration.SkipInvalidLines)
+            {
+                if (Configuration.InvalidLineAsComment)
+                {
+                    _currentComments.Add(currentLine);
+                }
+                return;
+            }
 
             var error = $"Couldn't parse text. Please see configuration option {nameof(Configuration)}.{nameof(Configuration.SkipInvalidLines)} to ignore this error.";
 
@@ -128,15 +136,15 @@ namespace Excalibur.Ini
 
         protected virtual bool ParseComment(string currentLine, string currentLineTrimmed)
         {
-            if (!Configuration.ParseComments)
-            {
-                return true;
-            }
-
             var commentString = Scheme.CommentStrings.Find(x => currentLineTrimmed.StartsWith(x));
             if (string.IsNullOrEmpty(commentString))
             {
                 return false;
+            }
+
+            if (!Configuration.ParseComments)
+            {
+                return true;
             }
 
             if (Configuration.RemoveCommentString)
@@ -145,7 +153,7 @@ namespace Excalibur.Ini
                 var startIndex = commentStart + commentString.Length;
                 var length = currentLine.Length - startIndex;
 
-                var comment = currentLineTrimmed.Substring(startIndex, length);
+                var comment = currentLine.Substring(startIndex, length);
                 if (Configuration.TrimComments)
                 {
                     comment = comment.Trim();
@@ -164,19 +172,60 @@ namespace Excalibur.Ini
 
         protected virtual bool ParseSection(string currentLine, string currentLineTrimmed, IniData iniData)
         {
-            // 如果不是第一个符号为section起始符，最后一个符号不是section结束符，则返回
             // 'SectionStartString'section_name'SectionEndString' eg: [section_name]
-            if (!(currentLineTrimmed.StartsWith(Scheme.SectionStartString) && currentLineTrimmed.EndsWith(Scheme.SectionEndString))) return false;
+            // 如果不是第一个符号为section起始符，则返回
+            if (!currentLineTrimmed.StartsWith(Scheme.SectionStartString)) return false;
 
-            var startIndex = Scheme.SectionStartString.Length;
-            var length = currentLineTrimmed.Length - startIndex - Scheme.SectionEndString.Length;
-            var sectionName = currentLineTrimmed.Substring(startIndex, length);
+            var startIndex = currentLine.IndexOf(Scheme.SectionStartString) + Scheme.SectionStartString.Length;
+
+            var endIndex = startIndex;
+            var lineLength = currentLine.Length;
+            for (int i = endIndex; i < lineLength; i++)
+            {
+                if (ContainsSubString(Scheme.SectionEndString, currentLine, lineLength, i))
+                {
+                    endIndex = i;
+                    break;
+                }
+            }
+
+            var commentAfterSectionName = "";
+            if (Configuration.ParseComments && Configuration.ParseCommentAfterSection)
+            {
+                if (HasComment(currentLine, Scheme.CommentStrings, endIndex + 1, out int commentStart, out string currentCommentString))
+                {
+                    var comment = currentLine.Substring(commentStart);
+
+                    if (Configuration.RemoveCommentString)
+                    {
+                        var commentStartIndex = currentCommentString.Length;
+                        if (commentStartIndex < comment.Length)
+                        {
+                            comment = comment.Substring(commentStartIndex);
+                        }
+                        if (Configuration.TrimComments)
+                        {
+                            comment = comment.Trim();
+                        }
+
+                        commentAfterSectionName = comment;
+                    }
+                    else
+                    {
+                        // 直接写入原有的注释行
+                        commentAfterSectionName = comment;
+                    }
+                }
+            }
+
+            var length = endIndex - startIndex;
+            var sectionName = currentLine.Substring(startIndex, length);
 
             if (string.IsNullOrWhiteSpace(sectionName))
             {
                 if (Configuration.SkipInvalidLines) return false;
 
-                var error = $"Section name can not be null or whitespace. Please see configuration option {nameof(Configuration)}.{nameof(Configuration.SkipInvalidLines)} 以忽略这个错误";
+                var error = $"Section name can not be null or whitespace. Please see configuration option {nameof(Configuration)}.{nameof(Configuration.SkipInvalidLines)} to ignore this error.";
                 throw new IniParsingException(error, _currentLineNumber, currentLine);
             }
 
@@ -188,28 +237,27 @@ namespace Excalibur.Ini
             _currentSectionName = sectionName;
 
             var exists = iniData.ContainsSection(sectionName);
-
-            switch (Configuration.DuplicateSectionsBehaviour)
+            if (exists)
             {
-                case IniParserConfiguration.DuplicateBehaviour.AllowAndRepeat:
-                    break;
-                case IniParserConfiguration.DuplicateBehaviour.DisallowAndStopWithError:
-                    if (exists)
-                    {
+                switch (Configuration.DuplicateSectionsBehaviour)
+                {
+                    case IniParserConfiguration.DuplicateBehaviour.AllowAndRepeat:
+                        break;
+                    case IniParserConfiguration.DuplicateBehaviour.DisallowAndStopWithError:
                         if (Configuration.SkipInvalidLines) return false;
-                        var error = $"Duplicate section with name '{sectionName}'. Please see configuration option {nameof(Configuration)}.{nameof(Configuration.DuplicateSectionsBehaviour)} to fix this error.";
+
+                        var error = $"Duplicate section with name '{sectionName}'. Please see configuration option {nameof(Configuration)}.{nameof(Configuration.DuplicateSectionsBehaviour)} to fix this error, or configuration option {nameof(Configuration)}.{nameof(Configuration.SkipInvalidLines)} to ignore this error.";
                         throw new IniParsingException(error, _currentLineNumber, currentLine);
-                    }
-                    break;
-                case IniParserConfiguration.DuplicateBehaviour.AllowAndKeepFirstValue:
-                    return false;
-                case IniParserConfiguration.DuplicateBehaviour.AllowAndKeepLastValue:
-                    iniData.Sections.RemoveFirst(sectionName);
-                    break;
+                    case IniParserConfiguration.DuplicateBehaviour.AllowAndKeepFirstValue:
+                        return false;
+                    case IniParserConfiguration.DuplicateBehaviour.AllowAndKeepLastValue:
+                        iniData.Sections.RemoveFirst(sectionName);
+                        break;
+                }
             }
 
             var section = iniData.Add(sectionName);
-
+            section.CommentAfterSectionName = commentAfterSectionName;
             if (Configuration.ParseComments && _currentComments.Count > 0)
             {
                 section.Comments = _currentComments;
@@ -231,7 +279,7 @@ namespace Excalibur.Ini
             {
                 if (Configuration.SkipInvalidLines) return false;
 
-                var error = $"Property key is null or whitespace. Please see configuration option {nameof(Configuration)}.{nameof(Configuration.SkipInvalidLines)} to ignore this error";
+                var error = $"Property key is null or whitespace. Please see configuration option {nameof(Configuration)}.{nameof(Configuration.SkipInvalidLines)} to ignore this error.";
                 throw new IniParsingException(error, _currentLineNumber, currentLine);
             }
 
@@ -241,7 +289,7 @@ namespace Excalibur.Ini
             var commentAfterValue = "";
             if (Configuration.ParseComments && Configuration.ParseCommentAfterProperty)
             {
-                if (HasComment(value, Scheme.CommentStrings, out int commentStart, out string currentCommentString))
+                if (HasComment(value, Scheme.CommentStrings, 0, out int commentStart, out string currentCommentString))
                 {
                     var comment = value.Substring(commentStart);
 
@@ -283,7 +331,7 @@ namespace Excalibur.Ini
             {
                 if (!Configuration.AllowKeysWithoutSection)
                 {
-                    var error = $"Properties must be contained inside a section. Please see configuration option {nameof(Configuration)}.{nameof(Configuration.AllowKeysWithoutSection)} to ignore this error";
+                    var error = $"Properties must be contained inside a section. Please see configuration option {nameof(Configuration)}.{nameof(Configuration.AllowKeysWithoutSection)} to fix this error.";
                     throw new IniParsingException(error, _currentLineNumber, currentLine);
                 }
 
@@ -297,16 +345,16 @@ namespace Excalibur.Ini
             return true;
         }
 
-        private static bool HasComment(string valueLine, List<string> commentStrings, out int commentStartIndex, out string currentCommentString)
+        private static bool HasComment(string valueLine, List<string> commentStrings, int startIndex, out int commentStartIndex, out string currentCommentString)
         {
             commentStartIndex = -1;
             currentCommentString = "";
             foreach (var commentString in commentStrings)
             {
                 var valueLineLength = valueLine.Length;
-                for (int i = 0; i < valueLine.Length; i++)
+                for (int i = startIndex; i < valueLine.Length; i++)
                 {
-                    if (IsCommentStart(commentString, valueLine, valueLineLength, i))
+                    if (ContainsSubString(commentString, valueLine, valueLineLength, i))
                     {
                         if (commentStartIndex > i || commentStartIndex < 0)
                         {
@@ -321,23 +369,23 @@ namespace Excalibur.Ini
             return commentStartIndex >= 0;
         }
 
-        private static bool IsCommentStart(string commentString, string currentLine, int currentLineLength, int currentLineIndex)
+        private static bool ContainsSubString(string subString, string content, int contentLength, int currentContentIndex)
         {
-            for (int j = 0; j < commentString.Length; j++)
+            for (int j = 0; j < subString.Length; j++)
             {
-                var lineIndex = currentLineIndex + j;
+                var lineIndex = currentContentIndex + j;
                 var preLineIndex = lineIndex - 1;
-                if (lineIndex >= currentLineLength)
+                if (lineIndex >= contentLength)
                 {
                     return false;
                 }
 
-                if (currentLine[lineIndex] != commentString[j])
+                if (content[lineIndex] != subString[j])
                 {
                     return false;
                 }
 
-                if (preLineIndex >= 0 && currentLine[preLineIndex] == '\\')
+                if (preLineIndex >= 0 && content[preLineIndex] == '\\')
                 {
                     return false;
                 }

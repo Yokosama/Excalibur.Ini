@@ -5,9 +5,12 @@ namespace Excalibur.Ini.Tests
     [TestClass]
     public class IniDataParserTest
     {
-       private readonly string _data = @"; line comment test1
+       private readonly string _data = @"; test global properties
+globalKey1 = globalValue1
+globalKey2 = globalValue2
+; line comment test1    
 ;line comment test2
-[qwer ]
+[qwer ] // test comment after section name 
 key1 = val[ue1
 key2 = value2
 
@@ -44,9 +47,14 @@ key1 = value1
             var iniData = parser.Parse(_data);
             Assert.AreEqual(iniData.SectionCount, 4);
 
+            // test global properties
+            Assert.AreEqual(iniData.Global.Count, 2);
+            Assert.AreEqual(iniData.Global.GetPropertyRawValue("globalKey2", ""), " globalValue2");
+
             // line comment test
             Assert.AreEqual(iniData.GetSection("qwer").Comments.Count, 2);
-            Assert.AreEqual(iniData.GetSection("qwer").Comments[0], " line comment test1");
+            Assert.AreEqual(iniData.GetSection("qwer").Comments[0], " line comment test1    ");
+            Assert.AreEqual(iniData.GetSection("qwer").CommentAfterSectionName, " test comment after section name ");
             Assert.AreEqual(iniData.GetSection("qwer").GetPropertyRawValue("key1", ""), " val[ue1");
 
             // test section comment
