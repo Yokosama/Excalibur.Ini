@@ -238,17 +238,14 @@ namespace Excalibur.Ini
             var valueStartIndex = propertyAssignmentIndex + Scheme.PropertyAssignmentString.Length + 1;
             var value = currentLine.Substring(valueStartIndex);
 
-            var valueLength = value.Length - 1;
-
             var commentAfterValue = "";
             if (Configuration.ParseComments && Configuration.ParseCommentAfterProperty)
             {
                 if (HasComment(value, Scheme.CommentStrings, out int commentStart, out string currentCommentString))
                 {
-                    valueLength = commentStart - 1;
-                    if (valueLength > 0)
+                    if (commentStart > 0)
                     {
-                        value = value.Substring(0, valueLength);
+                        value = value.Substring(0, commentStart);
                     }
                     else
                     {
@@ -259,8 +256,7 @@ namespace Excalibur.Ini
                     if (Configuration.RemoveCommentString)
                     {
                         var startIndex = commentStart + currentCommentString.Length;
-                        var length = currentLine.Length - startIndex;
-
+                        comment = comment.Substring(startIndex);
                         if (Configuration.TrimComments)
                         {
                             comment = comment.Trim();
@@ -297,37 +293,52 @@ namespace Excalibur.Ini
             return true;
         }
 
-        private bool HasComment(string valueLine, List<string> commentStrings, out int commentStart, out string currentCommentString)
+        private static bool HasComment(string valueLine, List<string> commentStrings, out int commentStartIndex, out string currentCommentString)
         {
-            commentStart = -1;
+            commentStartIndex = -1;
             currentCommentString = "";
             foreach (var commentString in commentStrings)
             {
-                commentStart = -1;
-                int indexOfStart = 0;
-                while ((commentStart = valueLine.IndexOf(commentString, indexOfStart)) > 0 && valueLine[commentStart - 1] == '\\')
+                var valueLineLength = valueLine.Length;
+                for (int i = 0; i < valueLine.Length; i++)
                 {
-                    indexOfStart = commentStart + commentString.Length;
-                    if (indexOfStart >= valueLine.Length)
+                    if (IsCommentStart(commentString, valueLine, valueLineLength, i))
                     {
-                        commentStart = -1;
+                        if (commentStartIndex > i || commentStartIndex < 0)
+                        {
+                            commentStartIndex = i;
+                            currentCommentString = commentString;
+                        }
                         break;
                     }
-                    commentStart = valueLine.IndexOf(commentString, indexOfStart);
-                }
-
-                if (commentStart < 0)
-                {
-                    continue;
-                }
-                else if (commentStart >= 0)
-                {
-                    currentCommentString = commentString;
-                    break;
                 }
             }
 
-            return commentStart >= 0;
+            return commentStartIndex >= 0;
+        }
+
+        private static bool IsCommentStart(string commentString, string currentLine, int currentLineLength, int currentLineIndex)
+        {
+            for (int j = 0; j < commentString.Length; j++)
+            {
+                var lineIndex = currentLineIndex + j;
+                var preLineIndex = lineIndex - 1;
+                if (lineIndex >= currentLineLength)
+                {
+                    return false;
+                }
+
+                if (currentLine[lineIndex] != commentString[j])
+                {
+                    return false;
+                }
+
+                if (preLineIndex >= 0 && currentLine[preLineIndex] == '\\')
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         private void AddProperty(string key, string value, Section section, string sectionName, string commentAfterValue)
