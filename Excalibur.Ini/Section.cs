@@ -96,6 +96,11 @@ namespace Excalibur.Ini
             return last ? Properties.FindLast(key) : Properties.Find(key);
         }
 
+        public List<Property> GetProperties(string key)
+        {
+            return Properties.FindAll(key);
+        }
+
         public string GetPropertyRawValue(string key, string nullValue, bool last = false)
         {
             var find = last ? Properties.FindLast(key) : Properties.Find(key);

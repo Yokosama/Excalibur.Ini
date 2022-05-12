@@ -17,4 +17,10 @@
     <ProjectReference Include="..\Excalibur.Ini\Excalibur.Ini.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="IniFileTest.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

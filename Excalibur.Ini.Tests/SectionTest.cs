@@ -25,6 +25,10 @@ namespace Excalibur.Ini.Tests
             Assert.AreEqual(v1, "22");
             Assert.AreEqual(v2, "222");
 
+            Assert.AreEqual(section.GetProperty("2").Value, "22");
+            Assert.AreEqual(section.GetProperty("2", true).Value, "222");
+            Assert.AreEqual(section.GetProperties("2").Count, 2);
+
             var v3 = section.GetPropertyValue("2", 0);
             var v4 = section.GetPropertyValue("2", 0, true);
             Assert.AreEqual(v3, 22);
