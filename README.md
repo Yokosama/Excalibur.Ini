@@ -52,7 +52,7 @@ var iniFile = new IniFile();
 var iniData = iniFile.Load("test.ini", Encoding.Default);
 
 // 保存文件
-iniFile.Save(data, saveFile, Encoding.Default)
+iniFile.Save(data, saveFile, Encoding.Default);
 ```
 
 获取ini节点
@@ -69,17 +69,17 @@ var property = iniData.GetProperty("Key");
 
 // 通过iniData获取属性值
 // 获取默认的字符串值
-var value = iniData.GetPropertyRawValue("SectionName", "Key", "DefaultValue")
+string value = iniData.GetPropertyRawValue("SectionName", "Key", "DefaultValue");
 
 // 获取自动转换类型后的属性值
-var value = iniData.GetPropertyValue("SectionName", "Key", 0)
+int value = iniData.GetPropertyValue("SectionName", "Key", 0);
 
 // 通过Section获取属性值
 // 获取默认的字符串值
-var value = section.GetPropertyRawValue("Key", "DefaultValue")
+var value = section.GetPropertyRawValue("Key", "DefaultValue");
 
 // 获取自动转换类型后的属性值
-var value = section.GetPropertyValue("Key", 0)
+var value = section.GetPropertyValue("Key", 0);
 ```
 
 修改ini解析格式，可以通过`IniDataParser.Scheme`进行修改：
@@ -91,11 +91,11 @@ parser.Scheme.CommentStrings.Add("//");
 parser.Scheme.CommentStrings.Add("#");
 
 // 修改节点起始、结束符号
-parser.Scheme.SectionStartString = "<"
-parser.Scheme.SectionEndString = ">"
+parser.Scheme.SectionStartString = "<";
+parser.Scheme.SectionEndString = ">";
 
 // 修改键值分隔符
-parser.Scheme.PropertyAssignmentString = "-"
+parser.Scheme.PropertyAssignmentString = "-";
 ```
 
 修改ini解析配置，可以通过`IniDataParser.Configuration`进行修改：
