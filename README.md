@@ -19,7 +19,7 @@ C#实现的ini读写库。支持.NET，.NET Core等平台。
 7、更自由的解析和格式化写入配置
 
 ## 使用方式
-添加命名控件：
+添加命名空间：
 
 ```csharp
 using Excalibur.Ini
