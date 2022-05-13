@@ -34,6 +34,9 @@ namespace Excalibur.Ini
         }
 
         private string _sectionStartString = "[";
+        /// <summary>
+        /// 节点起始字符
+        /// </summary>
         public string SectionStartString
         {
             get => string.IsNullOrWhiteSpace(_sectionStartString) ? "[" : _sectionStartString;
@@ -41,6 +44,9 @@ namespace Excalibur.Ini
         }
 
         private string _sectionEndString = "]";
+        /// <summary>
+        /// 节点结束字符
+        /// </summary>
         public string SectionEndString
         {
             get => string.IsNullOrWhiteSpace(_sectionEndString) ? "]" : _sectionEndString;
@@ -48,6 +54,9 @@ namespace Excalibur.Ini
         }
 
         private string _propertyAssignmentString = "=";
+        /// <summary>
+        /// 属性键值赋值符
+        /// </summary>
         public string PropertyAssignmentString
         {
             get => string.IsNullOrWhiteSpace(_propertyAssignmentString) ? "=" : _propertyAssignmentString;
@@ -64,6 +73,10 @@ namespace Excalibur.Ini
         {
         }
 
+        /// <summary>
+        /// 复制构造函数
+        /// </summary>
+        /// <param name="other"></param>
         public IniScheme(IniScheme other)
         {
             CommentStrings = other.CommentStrings;
@@ -72,6 +85,10 @@ namespace Excalibur.Ini
             PropertyAssignmentString = other.PropertyAssignmentString;
         }
 
+        /// <summary>
+        /// 复制当前对象
+        /// </summary>
+        /// <returns></returns>
         public IniScheme Clone()
         {
             return new IniScheme(this);

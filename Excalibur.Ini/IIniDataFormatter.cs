@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Excalibur.Ini
+﻿namespace Excalibur.Ini
 {
     /// <summary>
     /// 格式化IniData到字符串中

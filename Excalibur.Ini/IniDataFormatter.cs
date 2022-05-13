@@ -3,8 +3,17 @@ using System.Text;
 
 namespace Excalibur.Ini
 {
+    /// <summary>
+    /// Ini数据格式化
+    /// </summary>
     public class IniDataFormatter : IIniDataFormatter
     {
+        /// <summary>
+        /// 格式化IniData
+        /// </summary>
+        /// <param name="iniData">ini数据</param>
+        /// <param name="format">格式化配置</param>
+        /// <returns>格式化后的字符串</returns>
         public string Format(IniData iniData, IniFormattingConfiguration format)
         {
             var sb = new StringBuilder();

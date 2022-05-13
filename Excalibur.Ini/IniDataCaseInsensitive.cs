@@ -7,12 +7,19 @@ namespace Excalibur.Ini
     /// </summary>
     public class IniDataCaseInsensitive : IniData
     {
+        /// <summary>
+        /// 默认构造函数
+        /// </summary>
         public IniDataCaseInsensitive()
         {
             Global = new Section(GlobalSection, StringComparer.OrdinalIgnoreCase);
             Sections = new KeyValues<Section>(StringComparer.OrdinalIgnoreCase);
         }
 
+        /// <summary>
+        /// 带IniScheme的构造函数
+        /// </summary>
+        /// <param name="scheme"></param>
         public IniDataCaseInsensitive(IniScheme scheme)
         {
             Global = new Section(GlobalSection, StringComparer.OrdinalIgnoreCase);
@@ -20,6 +27,10 @@ namespace Excalibur.Ini
             _scheme = scheme.Clone();
         }
 
+        /// <summary>
+        /// 复制其他IniData的构造函数
+        /// </summary>
+        /// <param name="other"></param>
         public IniDataCaseInsensitive(IniData other)
         : this()
         {

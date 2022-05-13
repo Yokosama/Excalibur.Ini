@@ -25,6 +25,8 @@ namespace Excalibur.Ini.Tests
             var getSec = data.GetSection("section_test2");
             Assert.AreEqual(getSec.Name, "section_test2");
 
+            Assert.IsTrue(data.ContainsSection("section_test"));
+
             var getSecions = data.GetSection("section_test");
             Assert.AreEqual(getSecions.Count, 2);
 

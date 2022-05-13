@@ -85,10 +85,17 @@
         /// </summary>
         public bool InvalidLineAsComment { get; set; } = false;
 
+        /// <summary>
+        /// 默认构造函数
+        /// </summary>
         public IniParserConfiguration()
         {
         }
 
+        /// <summary>
+        /// 复制其他配置的构造函数
+        /// </summary>
+        /// <param name="other">其他解析配置</param>
         public IniParserConfiguration(IniParserConfiguration other)
         {
             CaseInsensitive = other.CaseInsensitive;
@@ -109,6 +116,10 @@
             InvalidLineAsComment = other.InvalidLineAsComment;
         }
 
+        /// <summary>
+        /// 复制当前对象
+        /// </summary>
+        /// <returns>复制后的解析配置对象</returns>
         public IniParserConfiguration Clone()
         {
             return new IniParserConfiguration(this);

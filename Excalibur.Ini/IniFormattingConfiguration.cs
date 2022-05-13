@@ -7,6 +7,9 @@ namespace Excalibur.Ini
     /// </summary>
     public class IniFormattingConfiguration : ICloneable<IniFormattingConfiguration>
     {
+        /// <summary>
+        /// 新行的字符串 Environment.NewLine
+        /// </summary>
         public string NewLineString => Environment.NewLine;
 
         /// <summary>
@@ -65,12 +68,19 @@ namespace Excalibur.Ini
         /// </summary>
         public bool NewLineAfterSection { get; set; } = true;
 
+        /// <summary>
+        /// 默认构造函数
+        /// </summary>
         public IniFormattingConfiguration()
         {
             NumberSpacesBetweenKeyAndAssignment = 1;
             NumberSpacesBetweenAssignmentAndValue = 1;
         }      
         
+        /// <summary>
+        /// 复制其他配置的构造函数
+        /// </summary>
+        /// <param name="other">其他格式化配置</param>
         public IniFormattingConfiguration(IniFormattingConfiguration other)
         {
             SpacesBetweenKeyAndAssignment = other.SpacesBetweenKeyAndAssignment;
@@ -81,6 +91,10 @@ namespace Excalibur.Ini
             NewLineBeforeProperty = other.NewLineAfterSection;
         }
 
+        /// <summary>
+        /// 复制格式化配置对象
+        /// </summary>
+        /// <returns></returns>
         public IniFormattingConfiguration Clone()
         {
             return new IniFormattingConfiguration(this);

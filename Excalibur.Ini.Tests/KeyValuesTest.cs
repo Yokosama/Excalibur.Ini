@@ -31,6 +31,19 @@ namespace Excalibur.Ini.Tests
             kvs.Add("5", new TestItem { Key = "5", Value = "555" });
             Assert.AreEqual(kvs.Length, 6);
 
+            // test insert
+            var item1 = new TestItem { Key = "11", Value = "666" };
+
+            // insert before "3"
+            kvs.Insert("11", item1, "3", false);
+            Assert.AreEqual(kvs.IndexOf(item1), 2);
+            Assert.AreEqual(kvs.IndexOf(kvs.Find("3")), 3);
+            
+            // 1,2,11,3,4,22,4
+            var item2 = new TestItem { Key = "22", Value = "666" };
+            kvs.Insert("22", item2, "4", true);
+            Assert.AreEqual(kvs.IndexOf(item2), 5);
+
             var item = kvs.Find("4");
             Assert.AreEqual(item.Value, "444");
 

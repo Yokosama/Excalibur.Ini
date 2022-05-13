@@ -35,6 +35,9 @@ namespace Excalibur.Ini
         private string _currentSectionName;
         private uint _currentLineNumber;
 
+        /// <summary>
+        /// 默认构造函数
+        /// </summary>
         public IniDataParser()
         {
             Scheme = new IniScheme();
@@ -42,11 +45,21 @@ namespace Excalibur.Ini
             _errorExceptions = new List<Exception>();
         }
 
+        /// <summary>
+        /// 解析ini字符串
+        /// </summary>
+        /// <param name="iniString">ini字符串</param>
+        /// <returns>解析后的IniData</returns>
         public IniData Parse(string iniString)
         {
             return Parse(new StringReader(iniString));
         }
 
+        /// <summary>
+        /// 通过TextReader解析ini数据
+        /// </summary>
+        /// <param name="reader">TextReader</param>
+        /// <returns>解析后的IniData</returns>
         public IniData Parse(TextReader reader)
         {
             IniData iniData = Configuration.CaseInsensitive ? new IniDataCaseInsensitive(Scheme) : new IniData(Scheme);
@@ -102,6 +115,12 @@ namespace Excalibur.Ini
             _currentLineNumber = 0;
         }
 
+        /// <summary>
+        /// 解析文本的行
+        /// </summary>
+        /// <param name="currentLine">当前文本行</param>
+        /// <param name="iniData">当前的ini数据</param>
+        /// <exception cref="IniParsingException">Ini解析异常</exception>
         protected virtual void ParseLine(string currentLine, IniData iniData)
         {
             if (string.IsNullOrWhiteSpace(currentLine))
@@ -135,6 +154,12 @@ namespace Excalibur.Ini
             throw new IniParsingException(error, _currentLineNumber, currentLine);
         }
 
+        /// <summary>
+        /// 解析注释行
+        /// </summary>
+        /// <param name="currentLine">当前文本行</param>
+        /// <param name="currentLineTrimmed">移除前后空格的文本行</param>
+        /// <returns>true：解析注释成功；false：非注释行</returns>
         protected virtual bool ParseComment(string currentLine, string currentLineTrimmed)
         {
             var commentString = Scheme.CommentStrings.Find(x => currentLineTrimmed.StartsWith(x));
@@ -171,6 +196,14 @@ namespace Excalibur.Ini
             return true;
         }
 
+        /// <summary>
+        /// 解析节点行
+        /// </summary>
+        /// <param name="currentLine">当前文本行</param>
+        /// <param name="currentLineTrimmed">移除前后空格的文本行</param>
+        /// <param name="iniData">当前的ini数据</param>
+        /// <returns>true：解析节点行成功；false：非节点行</returns>
+        /// <exception cref="IniParsingException">Ini解析异常</exception>
         protected virtual bool ParseSection(string currentLine, string currentLineTrimmed, IniData iniData)
         {
             // 'SectionStartString'section_name'SectionEndString' eg: [section_name]
@@ -268,6 +301,13 @@ namespace Excalibur.Ini
             return true;
         }
 
+        /// <summary>
+        /// 解析属性行
+        /// </summary>
+        /// <param name="currentLine">当前文本行</param>
+        /// <param name="iniData">当前的ini数据</param>
+        /// <returns>true：解析属性行成功；false：非属性行</returns>
+        /// <exception cref="IniParsingException">Ini解析异常</exception>
         protected virtual bool ParseProperty(string currentLine, IniData iniData)
         {
             var propertyAssignmentIndex = currentLine.IndexOf(Scheme.PropertyAssignmentString);

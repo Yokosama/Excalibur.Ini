@@ -20,6 +20,16 @@ namespace Excalibur.Ini.Tests
             section.Add("2", "222");
 
             Assert.AreEqual(section.Count, 3);
+
+            section.Insert("44", "224", "2");
+            Assert.AreEqual(section.Properties.IndexOf(section.GetProperty("44")), 1);
+            section.Insert("55", "224", "2", true);
+            Assert.AreEqual(section.Properties.IndexOf(section.GetProperty("55")), 3);
+
+            var insertItem = new Property("33", "ww");
+            section.Insert(insertItem);
+            Assert.AreEqual(section.Properties.IndexOf(insertItem), 5);
+
             var v1 = section.GetPropertyRawValue("2", "");
             var v2 = section.GetPropertyRawValue("2", "", true);
             Assert.AreEqual(v1, "22");
@@ -42,7 +52,7 @@ namespace Excalibur.Ini.Tests
             Assert.AreEqual(v5, "55");
 
             var clone = section.Clone();
-            Assert.AreEqual(clone.Count, 3);
+            Assert.AreEqual(clone.Count, 6);
 
             clone.Comments.Add("comment test");
             Assert.AreEqual(clone.Comments.Count, 1);
