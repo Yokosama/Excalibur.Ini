@@ -50,7 +50,7 @@ namespace Excalibur.Ini
                     _comments = new List<string>();
                 }
                 _comments.Clear();
-                _comments.AddRange(value);
+                if (value != null) _comments.AddRange(value);
             }
         }
 
@@ -228,19 +228,26 @@ namespace Excalibur.Ini
         /// <typeparam name="T">值类型</typeparam>
         /// <param name="key">关键字</param>
         /// <param name="value">值</param>
+        /// <param name="comments">属性注释</param>
         /// <param name="addNew">找不到是否新增</param>
         /// <param name="last">是否逆序查找属性</param>
-        public void SetPropertyValue<T>(string key, T value, bool addNew = true, bool last = false)
+        public void SetPropertyValue<T>(string key, T value, List<string> comments = null, bool addNew = true, bool last = false)
         {
             var v = Convert.ToString(value);
             var find =  last ? Properties.FindLast(key) : Properties.Find(key);
             if (find == null)
             {
-                if (addNew) Properties.Add(key, new Property(key, v));
+                if (addNew)
+                {
+                    var p = new Property(key, v);
+                    if(comments != null) { p.Comments = comments; }
+                    Properties.Add(key, p);
+                }
                 return;
             }
 
             find.Value = v;
+            if (comments != null) { find.Comments = comments; }
         }
 
         private T ConvertValue<T>(string value, T nullValue)

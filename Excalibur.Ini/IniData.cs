@@ -263,14 +263,15 @@ namespace Excalibur.Ini
         /// <param name="sectionName">节点名称</param>
         /// <param name="key">属性关键字</param>
         /// <param name="value">属性值</param>
+        /// <param name="comments">注释</param>
         /// <param name="addNew">未找到是否添加新属性</param>
         /// <param name="lastSection">逆序查找节点</param>
         /// <param name="lastProperty">逆序查找属性</param>
-        public void SetPropertyValue<T>(string sectionName, string key, T value, bool addNew = true, bool lastSection = false, bool lastProperty = false)
+        public void SetPropertyValue<T>(string sectionName, string key, T value, List<string> comments = null, bool addNew = true, bool lastSection = false, bool lastProperty = false)
         {
             if (string.IsNullOrEmpty(sectionName))
             {
-                Global.SetPropertyValue(key, value, addNew, lastProperty);
+                Global.SetPropertyValue(key, value, comments, addNew, lastProperty);
             }
 
             var section = lastSection ? Sections.FindLast(sectionName) : Sections.Find(sectionName);
@@ -279,7 +280,7 @@ namespace Excalibur.Ini
                 return;
             }
 
-            section.SetPropertyValue(key, value, addNew, lastProperty);
+            section.SetPropertyValue(key, value, comments, addNew, lastProperty);
         }
 
         /// <summary>

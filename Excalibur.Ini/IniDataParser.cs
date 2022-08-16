@@ -456,7 +456,7 @@ namespace Excalibur.Ini
                     case IniParserConfiguration.DuplicateBehaviour.AllowAndKeepFirstValue:
                         return;
                     case IniParserConfiguration.DuplicateBehaviour.AllowAndKeepLastValue:
-                        section.SetPropertyValue(key, value, false);
+                        section.SetPropertyValue(key, value, addNew: false);
                         break;
                 }
             }

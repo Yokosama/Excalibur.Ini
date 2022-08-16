@@ -132,6 +132,40 @@ namespace Excalibur.Ini
         }
 
         /// <summary>
+        /// 在某个下标插入对象
+        /// </summary>
+        /// <param name="key">关键字</param>
+        /// <param name="item">需插入的对象</param>
+        /// <param name="index">下标</param>
+        /// <param name="canRepeat">是否支持重复对象</param>
+        /// <returns>true：插入成功；false：不可重复添加或下标不在有效范围内</returns>
+        public bool Insert(string key, T item, int index, bool canRepeat = true)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                return false;
+            }
+
+            var exists = _dicItems.ContainsKey(key);
+            if (exists && !canRepeat)
+            {
+                return false;
+            }
+
+            if(index < 0 || index >= _items.Count)
+            {
+                return false;
+            }
+
+            _items.Insert(index, item);
+
+            if (!exists) _dicItems[key] = new List<T>();
+            _dicItems[key].Add(item);
+
+            return true;
+        }
+
+        /// <summary>
         /// 获取对象所处的下标
         /// </summary>
         /// <param name="item">对象</param>

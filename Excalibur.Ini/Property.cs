@@ -39,7 +39,7 @@ namespace Excalibur.Ini
                     _comments = new List<string>();
                 }
                 _comments.Clear();
-                _comments.AddRange(value);
+                if(value != null) _comments.AddRange(value);
             }
         }
 
